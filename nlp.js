@@ -1,15 +1,18 @@
 const natural = require('natural');
 const stringSimilarity = require('string-similarity');
 const fs = require('fs');
+
+// Importa configuración y función para registrar preguntas no reconocidas
 const { archivoConsultasNoReconocidas, UMBRAL_SIMILITUD } = require('./config');
 const { registrarConsultaNoReconocida } = require('./utils');
 
-const tokenizer = new natural.WordTokenizer();
-const stemmer = natural.PorterStemmer;
+const tokenizer = new natural.WordTokenizer(); // Tokenizador de palabras
+const stemmer = natural.PorterStemmer; // stemmer
 
-let corpus = [];
-let corpusProcesado = [];
+let corpus = [];             // Corpus original
+let corpusProcesado = [];    // Corpus transformado con stemming
 
+// Carga y preprocesa el corpus desde un archivo JSON
 try {
   const data = fs.readFileSync('corpus.json', 'utf8');
   corpus = JSON.parse(data);
@@ -23,6 +26,7 @@ try {
   process.exit(1);
 }
 
+// Busca una respuesta según la similitud con el corpus
 function buscarRespuesta(inputUsuario) {
   const inputProcesado = tokenizer.tokenize(inputUsuario.toLowerCase())
     .map(stemmer.stem)
@@ -33,6 +37,7 @@ function buscarRespuesta(inputUsuario) {
     respuesta: "Lo siento, no entendí tu pregunta. ¿Podrías reformularla?"
   };
 
+  // Compara el input procesado con cada pregunta del corpus
   corpusProcesado.forEach(item => {
     const puntuacion = stringSimilarity.compareTwoStrings(inputProcesado, item.preguntaProcesada);
     if (puntuacion > mejorCoincidencia.puntuacion && puntuacion >= UMBRAL_SIMILITUD) {
@@ -40,6 +45,7 @@ function buscarRespuesta(inputUsuario) {
     }
   });
 
+  // Si no encuentra una coincidencia válida, registra la consulta como no reconocida
   if (mejorCoincidencia.puntuacion < UMBRAL_SIMILITUD) {
     registrarConsultaNoReconocida(inputUsuario);
   }
