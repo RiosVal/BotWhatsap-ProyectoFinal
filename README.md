@@ -7,6 +7,6 @@
 - Debes escanear el Qr generado para activar tu línea de whatsapp como bot.
 
 ## Entregables
-- El funcionamiento del bot se puede observar en el video `entregables/ideoFuncionamiento.mp4`
+- El funcionamiento del bot se puede observar en el video `entregables/VideoFuncionamiento.mp4`
 - El mensaje de bienvenida se puede observar en el archivo `config.js`
 - El diagrma de la arquitectura del bot se encuentra dentro de la carpeta `entregables`
